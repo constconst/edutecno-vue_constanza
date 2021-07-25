@@ -49,5 +49,6 @@ padding: 0;
   padding: 0;
   margin: 0;
   background-color: lightcoral;
+  min-height: 80vh;
 }
 </style>
