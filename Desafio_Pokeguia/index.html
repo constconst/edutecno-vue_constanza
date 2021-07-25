@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Desafío componentes</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <script src="https://unpkg.com/vue"></script>
+</head>
+<style>
+    * {
+        padding: 0;
+        margin: 0;
+    }
+</style>
+
+<body>
+
+    <main><img src="./assets/img/pkmlogo.png" style="max-width:400px;margin:50px auto;display:block;" alt=""></main>
+    <div id="app">
+        <div class="container">
+            <div class="columns">
+                <div class="column">
+
+                </div>
+                <div class="column">
+                    <input v-model="search" value="Pikachu" type="text" class="input is-warning" v-on:keyup.enter="searchData">
+                </div>
+                <div class="column">
+                    <button class="button is-warning is-rounded" v-on:click="searchData">
+              Buscar
+            </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="pokemon container">
+            <div class="columns">
+                <div class="column" style="display:flex;justify-content: center; align-items: center;">
+                    <h2 style="font-size: 50px;text-align: center;">{{pokemon.name}}</h2>
+                    <img :src="pokemon.sprites.front_default" alt="" style="height:200px; width:auto">
+                </div>
+            </div>
+            <div class="" style="text-align: center;">
+                <div class="">
+                    <h3 style="font-size: 50px;">Movimientos</h3>
+                </div>
+                <ul>
+                    <li v-for="(movimiento, index) in Movimientos">{{ movimiento }}</li>
+                </ul>
+            </div>
+            <div class="" style="text-align: center;">
+                <div class="">
+                    <h3 style="font-size: 50px;">Habilidades</h3>
+                    <ul>
+                        <li v-for="(habilidad, index) in Habilidades">{{ habilidad }}</li>
+                    </ul>
+                </div>
+                <div class=""></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                pokemon: [],
+                habilidades: [],
+                movimientos: [],
+                search: ""
+            },
+            beforeCreated() {
+
+            },
+            created() {
+                this.fetch('Pikachu');
+            },
+            methods: {
+                fetch(name) {
+                    name = name.toLowerCase();
+                    console.log(name);
+                    let result =
+                        // Simple GET request using fetch
+                        fetch(`https://pokeapi.co/api/v2/pokemon/${name}`)
+                        .then(response => response.json())
+                        .then(data => this.pokemon = data)
+                        .then(data => this.movimientos = data.moves)
+                        .then(data => this.habilidades = data.abilities);
+                },
+                searchData() {
+                    this.fetch(this.search);
+                }
+            },
+            computed: {
+                Habilidades() {
+                    let abilities = []
+                    this.movimientos.forEach(element => {
+                        abilities.push(element.move.name)
+                    });
+                    return abilities
+                },
+                Movimientos() {
+                    let moves = []
+                    this.movimientos.forEach(element => {
+                        moves.push(element.move.name)
+                    });
+                    return moves
+                }
+            }
+        })
+    </script>
+    <!-- <style scoped>
+        #app {}
+    </style> -->
+</body>
+
+</html>
+
+<!-- Notas -->
+<!-- A vue component can go through 4 phases:
+1. creation
+-> beforecreate(), created()
+-> the created method is the best place to make API requests.
+2. mounting
+-> During this phase the things are mounted in the DOM.
+-> beforeMount(), mounted()
+-> the most commonly used method is mounted(), when the app is ready.
+3. updating
+-> triggered when a reactive property such as data or computed properties changes () or the component re-renders.
+-> beforeUpdate(), updated()
+4. unmounting 
+-> relates to the momento when the component is about to be removed from the DOM.
+-> beforeUnmount(), unmounted()
+5. MISC
+-> activated(), deactivated(), errorCaptured(), renderTracked(), renderTriggered()
+Not all of them are crucial to building your apps.
+-->
